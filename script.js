@@ -10,15 +10,22 @@ let state = {
     ai_interval_id: null,
     mouse_down: false,
     last_dragged_board_cell: null,
+    timerRunning: false,
 };
 
 document.addEventListener("DOMContentLoaded", function (event) {
-    onNewGame();
-    const slider = document.getElementById('speed');
-    slider.addEventListener("input", (event) => {
-        cancelAIInterval();
-        queueAIInterval();
-    });
+  onNewGame();
+  const slider = document.getElementById('speed');
+  slider.addEventListener("input", (event) => {
+      cancelAIInterval();
+      queueAIInterval();
+  })
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === ' ' || event.key === 'Spacebar') {
+        toggleTimer();
+    }
+});
 
     document.addEventListener('mouseup', () => {
         state.last_dragged_board_cell = null;
@@ -105,12 +112,27 @@ async function onNewGame() {
     resetAIOnHumanInterferance();
 }
 
-function queueAIInterval() {
-    state.ai_interval_id = setInterval(() => {
-        aiPlayGame();
-        render();
-    }, getDelayMs());
-}
+function toggleTimer() {
+        if (state.timerRunning) {
+            cancelAIInterval();
+        } else {
+            queueAIInterval();
+        }
+        state.timerRunning = !state.timerRunning;
+    }
+
+    function queueAIInterval() {
+        if (state.timerRunning) { // Таймер повинен бути запущений, щоб виконати цю дію
+            state.ai_interval_id = setInterval(() => {
+                aiPlayGame();
+                render();
+            }, getDelayMs());
+        }
+    }
+
+    function cancelAIInterval() {
+        clearInterval(state.ai_interval_id);
+    }
 
 function cancelAIInterval() {
     clearInterval(state.ai_interval_id);
