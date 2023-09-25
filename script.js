@@ -134,10 +134,6 @@ function toggleTimer() {
         clearInterval(state.ai_interval_id);
     }
 
-function cancelAIInterval() {
-    clearInterval(state.ai_interval_id);
-}
-
 function onBoardCellClick(cell) {
     if (state.game_progress !== 'ACTIVE' || cell.nodeName !== 'TD') {
         return;
